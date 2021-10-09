@@ -36,7 +36,7 @@ const getNewMusic = async () => {
   }
 };
 
-const job = new CronJob("*/8 * * *", async function () {
+const job = new CronJob("0 */8 * * *", async function () {
   try {
     const channel = await getChannel();
     const music = await getNewMusic();
