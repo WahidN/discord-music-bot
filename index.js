@@ -3,17 +3,18 @@ const { Client, Intents } = require("discord.js");
 const puppeteer = require("puppeteer");
 var CronJob = require("cron").CronJob;
 
-const URL = "https://www.reddit.com/r/hiphopheads/";
+const REDDIT_URL = "https://www.reddit.com/r/hiphopheads/";
+const HHH_URL = "https://www.hotnewhiphop.com/songs/";
 
 const getChannel = async () => {
   return await bot.channels.cache.get(process.env.MUSIC_CHANNEL_ID);
 };
 
-const getNewMusic = async () => {
+const getRedditMusic = async () => {
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await page.goto(URL);
+    await page.goto(REDDIT_URL);
     const headings = await page.evaluate(() =>
       Array.from(document.getElementsByTagName("h3"), (e) => {
         return {
@@ -36,14 +37,38 @@ const getNewMusic = async () => {
   }
 };
 
-const job = new CronJob("0 */8 * * *", async function () {
+// const getHotNewHiphop = async () => {
+//   try {
+//     const browser = await puppeteer.launch();
+//     const page = await browser.newPage();
+//     await page.goto(HHH_URL);
+//     const songs = await page.evaluate(() => {
+//       Array.from(document.querySelectorAll(".grid-item"), (e) => {
+//         return {
+//           title: e.querySelector(".cover-title").innerText,
+//           url: e.querySelector(".cover-title").getAttribute("href"),
+//         };
+//       });
+//     });
+//     console.log(songs);
+//     await browser.close();
+//     return songs;
+//   } catch (e) {
+//     console.log(e);
+//     return [];
+//   }
+// };
+
+// getHotNewHiphop();
+
+const job = new CronJob("0 */3 * * *", async function () {
   try {
     const channel = await getChannel();
-    const music = await getNewMusic();
+    const freshMusic = await getRedditMusic();
     channel.messages.fetch({ limit: 30 }).then((messages) => {
       const channelMessages = messages.map((message) => message.content);
-      console.log(channelMessages);
-      music.forEach((item) => {
+      freshMusic.forEach((item) => {
+        console.log(item);
         if (!channelMessages.includes(`https://reddit.com${item.url}`)) {
           channel.send(`https://reddit.com${item.url}`);
         }
