@@ -13,7 +13,15 @@ const getChannel = async () => {
 const getRedditMusic = async () => {
   try {
     const browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
+      defaultViewport: null,
+      args: [
+        "--incognito",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+        "--disable-setuid-sandbox",
+      ],
     });
     const page = await browser.newPage();
     await page.goto(REDDIT_URL);
