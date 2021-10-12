@@ -11,18 +11,19 @@ const getChannel = async () => {
 };
 
 const getRedditMusic = async () => {
+  const browser = await puppeteer.launch({
+    headless: true,
+    defaultViewport: null,
+    args: [
+      "--incognito",
+      "--no-sandbox",
+      "--single-process",
+      "--no-zygote",
+      "--disable-setuid-sandbox",
+    ],
+  });
+
   try {
-    const browser = await puppeteer.launch({
-      headless: true,
-      defaultViewport: null,
-      args: [
-        "--incognito",
-        "--no-sandbox",
-        "--single-process",
-        "--no-zygote",
-        "--disable-setuid-sandbox",
-      ],
-    });
     const page = await browser.newPage();
     await page.goto(REDDIT_URL);
     const headings = await page.evaluate(() =>
@@ -39,11 +40,12 @@ const getRedditMusic = async () => {
         newMusic.push(heading);
       }
     });
-    await browser.close();
     return newMusic;
   } catch (e) {
     console.log(e);
     return [];
+  } finally {
+    await browser.close();
   }
 };
 
