@@ -73,14 +73,14 @@ const getRedditMusic = async () => {
 
 // getHotNewHiphop();
 
-const job = new CronJob("0 */3 * * *", async function () {
+const job = new CronJob("0 */8 * * *", async function () {
   try {
     const channel = await getChannel();
     const freshMusic = await getRedditMusic();
     channel.messages.fetch({ limit: 30 }).then((messages) => {
       const channelMessages = messages.map((message) => message.content);
       freshMusic.forEach((item) => {
-        console.log(item);
+        // console.log(item);
         if (!channelMessages.includes(`https://reddit.com${item.url}`)) {
           channel.send(`https://reddit.com${item.url}`);
         }
