@@ -3,3 +3,10 @@ dist
 .env
 .git
 *.log
+.gitignore
+docs
+.DS_Store
+.vscode
+.idea
+Dockerfile
+.dockerignore
